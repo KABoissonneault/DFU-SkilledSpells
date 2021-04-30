@@ -9,6 +9,7 @@ using DaggerfallWorkshop.Game.MagicAndEffects;
 using DaggerfallWorkshop.Game.Utility.ModSupport;
 
 using Wenzil.Console;
+using DaggerfallWorkshop;
 
 public class SkilledSpellsMod : MonoBehaviour
 {
@@ -25,11 +26,23 @@ public class SkilledSpellsMod : MonoBehaviour
     {
         Debug.Log("Begin mod init: Skilled Spells");
 
+        DaggerfallUnity.Instance.TextProvider = new SkillsSpellsTextProvider(DaggerfallUnity.Instance.TextProvider);
+
         FormulaHelper.RegisterOverride<Func<DaggerfallEntity, IEntityEffect, int>>(mod, "CalculateCasterLevel", CalculateCasterLevel);
 
         ConsoleCommandsDatabase.RegisterCommand("print_caster_levels", "Prints the caster level for all spell schools", "PRINT_CASTER_LEVELS", PrintCasterLevels);
 
         Debug.Log("Finished mod init: Skilled Spells");
+    }
+
+    public static bool IsCasterSkill(DFCareer.Skills skill)
+    {
+        return skill == DFCareer.Skills.Alteration
+            || skill == DFCareer.Skills.Destruction
+            || skill == DFCareer.Skills.Illusion
+            || skill == DFCareer.Skills.Mysticism
+            || skill == DFCareer.Skills.Restoration
+            || skill == DFCareer.Skills.Thaumaturgy;
     }
 
     private static int SchoolCasterLevelBonus(DFCareer.Skills skill)
@@ -45,7 +58,7 @@ public class SkilledSpellsMod : MonoBehaviour
         return 0;
     }
 
-    private static int SchoolCasterLevel(DFCareer.Skills skill)
+    public static int SchoolCasterLevel(DFCareer.Skills skill)
     {
         PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
 
