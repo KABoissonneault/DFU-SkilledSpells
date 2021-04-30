@@ -27,9 +27,10 @@ class SkillsSpellsTextProvider : FallbackTextProvider
         skillNameToken.formatting = formatting;
         skillNameToken.text = DaggerfallUnity.Instance.TextProvider.GetSkillName(skill);
 
+        short skillLevel = playerEntity.Skills.GetLiveSkillValue(skill);
         TextFile.Token skillValueToken = new TextFile.Token();
         skillValueToken.formatting = formatting;
-        skillValueToken.text = string.Format("{0}%", playerEntity.Skills.GetLiveSkillValue(skill));
+        skillValueToken.text = string.Format("{0}%", skillLevel);
 
         DFCareer.Stats primaryStat = DaggerfallSkills.GetPrimaryStat(skill);
         TextFile.Token skillPrimaryStatToken = new TextFile.Token();
@@ -48,21 +49,15 @@ class SkillsSpellsTextProvider : FallbackTextProvider
             tokens.Add(positioningToken);
         }
         tokens.Add(skillNameToken);
-
-        positioningToken.x = startPosition + 50;
-        tokens.Add(positioningToken);
-        tokens.Add(skillValueToken);
-
-        if(SkilledSpellsMod.IsCasterSkill(skill))
+        if (SkilledSpellsMod.IsCasterSkill(skill))
         {
-            positioningToken.x = startPosition + 85;
-            tokens.Add(positioningToken);
-            tokens.Add(new TextFile.Token(formatting, "Level " + SkilledSpellsMod.SchoolCasterLevel(skill)));
+            int level = SkilledSpellsMod.SchoolCasterLevel(skill);
+            tokens.Add(new TextFile.Token(formatting, $" ({level})"));
         }
 
         positioningToken.x = startPosition + 112;
         tokens.Add(positioningToken);
-        tokens.Add(skillPrimaryStatToken);
+        tokens.Add(skillValueToken);
 
         return tokens.ToArray();
     }
