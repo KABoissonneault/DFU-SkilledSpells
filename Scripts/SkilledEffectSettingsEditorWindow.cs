@@ -8,10 +8,12 @@ using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallConnect.Arena2;
 using static DaggerfallWorkshop.Game.UserInterfaceWindows.DaggerfallMessageBox;
+using DaggerfallWorkshop.Game.Formulas;
 
 class SkilledEffectSettingsEditorWindow : DaggerfallEffectSettingsEditorWindow
 {
     protected Button confirmButton;
+    protected TextLabel goldCostLabel;
 
     bool entryValid = false;
 
@@ -35,13 +37,27 @@ class SkilledEffectSettingsEditorWindow : DaggerfallEffectSettingsEditorWindow
 
         // Setup controls
         SetupEffectDescriptionPanels();
+
+        durationBaseSpinnerRect = new Rect(64, 105, spinnerWidth, spinnerHeight);
+        durationPlusSpinnerRect = new Rect(104, 105, spinnerWidth, spinnerHeight);
+        durationPerLevelSpinnerRect = new Rect(160, 105, spinnerWidth, spinnerHeight);
+        chanceBaseSpinnerRect = new Rect(64, 125, spinnerWidth, spinnerHeight);
+        chancePlusSpinnerRect = new Rect(104, 125, spinnerWidth, spinnerHeight);
+        chancePerLevelSpinnerRect = new Rect(160, 125, spinnerWidth, spinnerHeight);
+        magnitudeBaseMinSpinnerRect = new Rect(64, 145, spinnerWidth, spinnerHeight);
+        magnitudeBaseMaxSpinnerRect = new Rect(104, 145, spinnerWidth, spinnerHeight);
+        magnitudePlusMinSpinnerRect = new Rect(144, 145, spinnerWidth, spinnerHeight);
+        magnitudePlusMaxSpinnerRect = new Rect(184, 145, spinnerWidth, spinnerHeight);
+        magnitudePerLevelSpinnerRect = new Rect(235, 145, spinnerWidth, spinnerHeight);
+
         SetupSpinners();
 
         SetupButtons();
         InitControlState();
 
         // Spell cost label
-        spellCostLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, new Vector2(274, 107), string.Empty, NativePanel);
+        goldCostLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, new Vector2(274, 102), string.Empty, NativePanel);
+        spellCostLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, new Vector2(274, 122), string.Empty, NativePanel);
          
         IsSetup = true;
         UpdateCosts();
@@ -50,11 +66,11 @@ class SkilledEffectSettingsEditorWindow : DaggerfallEffectSettingsEditorWindow
     protected override void SetupButtons()
     {
         // Confirm button
-        confirmButton = DaggerfallUI.AddButton(new Rect(116, 154, 32, 16), NativePanel);
+        confirmButton = DaggerfallUI.AddButton(new Rect(116, 169, 32, 16), NativePanel);
         confirmButton.OnMouseClick += ConfirmButton_OnMouseClick;
 
         // Cancel button
-        exitButton = DaggerfallUI.AddButton(new Rect(172, 154, 32, 16), NativePanel);
+        exitButton = DaggerfallUI.AddButton(new Rect(172, 169, 32, 16), NativePanel);
         exitButton.OnMouseClick += CancelButton_OnMouseClick;
     }
 
@@ -157,6 +173,16 @@ class SkilledEffectSettingsEditorWindow : DaggerfallEffectSettingsEditorWindow
         magnitudePlusMinSpinner.OnValueChanged += MagnitudePlusMinSpinner_OnValueChanged;
         magnitudePlusMaxSpinner.OnValueChanged += MagnitudePlusMaxSpinner_OnValueChanged;
         magnitudePerLevelSpinner.OnValueChanged += MagnitudePerLevelSpinner_OnValueChanged;
+    }
+
+    protected override void UpdateCosts()
+    {
+        RaiseSettingsChanged();
+
+        // Get spell cost
+        (int goldCost, int spellPointCost) = FormulaHelper.CalculateEffectCosts(EffectEntry);
+        goldCostLabel.Text = goldCost.ToString();
+        spellCostLabel.Text = spellPointCost.ToString();
     }
 
     #endregion
