@@ -12,6 +12,7 @@ using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Game.MagicAndEffects;
 using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
 using DaggerfallWorkshop.Game.Utility.ModSupport;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
 using Wenzil.Console;
 
@@ -52,7 +53,7 @@ public class SkilledSpellsMod : MonoBehaviour
         var attributeKeys = new string[] { "Agility", "Endurance", "Intelligence", "Luck", "Personality", "Speed", "Strength", "Willpower" };
 
         // Alteration
-        durationCostOverride.Add(Climbing.EffectKey, new EffectCosts { CostA = 4, CostB = 30 });
+        durationCostOverride.Add(Climbing.EffectKey, new EffectCosts { CostA = 8, CostB = 60 });
 
         {
             var elementKeys = new string[] { "Fire", "Frost", "Shock", "Magicka" };
@@ -75,12 +76,12 @@ public class SkilledSpellsMod : MonoBehaviour
         durationCostOverride.Add(WaterBreathing.EffectKey, new EffectCosts { CostA = 4, CostB = 30 });
 
         // Destruction
-        durationCostOverride.Add(ContinuousDamageFatigue.EffectKey, new EffectCosts { CostA = 6, CostB = 45 });
-        magnitudeCostOverride.Add(ContinuousDamageFatigue.EffectKey, new EffectCosts { CostA = 6, CostB = 45 });
-        durationCostOverride.Add(ContinuousDamageHealth.EffectKey, new EffectCosts { CostA = 6, CostB = 45 });
-        magnitudeCostOverride.Add(ContinuousDamageHealth.EffectKey, new EffectCosts { CostA = 6, CostB = 45 });
-        durationCostOverride.Add(ContinuousDamageSpellPoints.EffectKey, new EffectCosts { CostA = 6, CostB = 45 });
-        magnitudeCostOverride.Add(ContinuousDamageSpellPoints.EffectKey, new EffectCosts { CostA = 6, CostB = 45 });
+        durationCostOverride.Add(ContinuousDamageFatigue.EffectKey, new EffectCosts { CostA = 6, CostB = 57 });
+        magnitudeCostOverride.Add(ContinuousDamageFatigue.EffectKey, new EffectCosts { CostA = 10, CostB = 95 });
+        durationCostOverride.Add(ContinuousDamageHealth.EffectKey, new EffectCosts { CostA = 6, CostB = 57 });
+        magnitudeCostOverride.Add(ContinuousDamageHealth.EffectKey, new EffectCosts { CostA = 10, CostB = 95 });
+        durationCostOverride.Add(ContinuousDamageSpellPoints.EffectKey, new EffectCosts { CostA = 6, CostB = 57 });
+        magnitudeCostOverride.Add(ContinuousDamageSpellPoints.EffectKey, new EffectCosts { CostA = 10, CostB = 95 });
 
         magnitudeCostOverride.Add(DamageFatigue.EffectKey, new EffectCosts { CostA = 8, CostB = 60 });
         magnitudeCostOverride.Add(DamageHealth.EffectKey, new EffectCosts { CostA = 8, CostB = 60 });
