@@ -15,6 +15,7 @@ using DaggerfallWorkshop.Game.Utility.ModSupport;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
 using Wenzil.Console;
+using DaggerfallWorkshop;
 
 public class SkilledSpellsMod : MonoBehaviour
 {
@@ -36,6 +37,8 @@ public class SkilledSpellsMod : MonoBehaviour
         Debug.Log("Begin mod init: Skilled Spells");
 
         RegisterCostOverrides();
+		
+        DaggerfallUnity.Instance.TextProvider = new SkillsSpellsTextProvider(DaggerfallUnity.Instance.TextProvider);
 
         FormulaHelper.RegisterOverride<Func<DaggerfallEntity, IEntityEffect, int>>(mod, "CalculateCasterLevel", CalculateCasterLevel);
         FormulaHelper.RegisterOverride<Func<IEntityEffect, EffectSettings, DaggerfallEntity, FormulaHelper.SpellCost>>(mod, "CalculateEffectCosts", CalculateEffectCosts);
@@ -49,6 +52,16 @@ public class SkilledSpellsMod : MonoBehaviour
         UIWindowFactory.RegisterCustomUIWindow(UIWindowType.EffectSettingsEditor, typeof(SkilledEffectSettingsEditorWindow));
 
         Debug.Log("Finished mod init: Skilled Spells");
+    }
+
+    public static bool IsCasterSkill(DFCareer.Skills skill)
+    {
+        return skill == DFCareer.Skills.Alteration
+            || skill == DFCareer.Skills.Destruction
+            || skill == DFCareer.Skills.Illusion
+            || skill == DFCareer.Skills.Mysticism
+            || skill == DFCareer.Skills.Restoration
+            || skill == DFCareer.Skills.Thaumaturgy;
     }
 
     void RegisterCostOverrides()
@@ -281,7 +294,7 @@ public class SkilledSpellsMod : MonoBehaviour
         return 0;
     }
 
-    private static int SchoolCasterLevel(DFCareer.Skills skill)
+    public static int SchoolCasterLevel(DFCareer.Skills skill)
     {
         PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
 

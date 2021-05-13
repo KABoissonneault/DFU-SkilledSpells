@@ -1,6 +1,6 @@
 {
     "ModTitle": "Skilled Spells",
-    "ModVersion": "0.1",
+    "ModVersion": "0.2",
     "ModAuthor": "Kab the Bird Ranger",
     "ContactInfo": "kaboissonneault@gmail.com",
     "DFUnity_Version": "0.11.3",
@@ -11,5 +11,6 @@
         "Assets/Game/Mods/SkilledSpells/Scripts/SkilledSpellsMod.cs",
         "Assets/Game/Mods/SkilledSpells/Scripts/SkilledEffectSettingsEditorWindow.cs",
         "Assets/Game/Mods/SkilledSpells/Textures/Img/MASK05I0.IMG.png"
+        "Assets/Game/Mods/SkilledSpells/Scripts/SkillsSpellsTextProvider.cs"
     ]
 }
