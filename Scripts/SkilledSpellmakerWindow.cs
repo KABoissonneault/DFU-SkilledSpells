@@ -2,7 +2,7 @@ using DaggerfallWorkshop.Game.MagicAndEffects;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
-class SkilledSpellmakerWindow : DaggerfallSpellMakerWindow
+public class SkilledSpellmakerWindow : DaggerfallSpellMakerWindow
 {
     #region Constructors
 
