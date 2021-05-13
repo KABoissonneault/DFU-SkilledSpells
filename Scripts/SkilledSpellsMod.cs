@@ -45,6 +45,9 @@ public class SkilledSpellsMod : MonoBehaviour
         ConsoleCommandsDatabase.RegisterCommand("verify_spell_costs", "Verifies the Skilled Spells overriden spell costs against a verification table, in the Persistent Path folder", "VERIFY_SPELL_COSTS [filename]", VerifyCostOverrides);
 #endif
 
+        UIWindowFactory.RegisterCustomUIWindow(UIWindowType.SpellMaker, typeof(SkilledSpellmakerWindow));
+        UIWindowFactory.RegisterCustomUIWindow(UIWindowType.EffectSettingsEditor, typeof(SkilledEffectSettingsEditorWindow));
+
         Debug.Log("Finished mod init: Skilled Spells");
     }
 

@@ -8,6 +8,8 @@
     "GUID": "940c2af8-a914-498e-a2aa-73f7d92e3370",
     "Files": [
         "Assets/Game/Mods/SkilledSpells/skilledspells.dfmod.json",
-        "Assets/Game/Mods/SkilledSpells/Scripts/SkilledSpellsMod.cs"
+        "Assets/Game/Mods/SkilledSpells/Scripts/SkilledSpellsMod.cs",
+        "Assets/Game/Mods/SkilledSpells/Scripts/SkilledEffectSettingsEditorWindow.cs",
+        "Assets/Game/Mods/SkilledSpells/Textures/Img/MASK05I0.IMG.png"
     ]
 }
