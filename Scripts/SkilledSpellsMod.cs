@@ -15,7 +15,6 @@ using DaggerfallWorkshop.Game.Utility.ModSupport;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 
 using Wenzil.Console;
-using DaggerfallWorkshop;
 
 public class SkilledSpellsMod : MonoBehaviour
 {
