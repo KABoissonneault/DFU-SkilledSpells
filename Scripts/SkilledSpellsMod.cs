@@ -169,10 +169,10 @@ public class SkilledSpellsMod : MonoBehaviour
             }
         }
         durationCostOverride.Add(Levitate.EffectKey, new EffectCosts { CostA = 12, CostB = 100 });
-        durationCostOverride.Add("Pacify-Animal", new EffectCosts { CostA = 12, CostB = 100, OffsetGold = 36 });
-        durationCostOverride.Add("Pacify-Daedra", new EffectCosts { CostA = 14, CostB = 120, OffsetGold = 160 });
-        durationCostOverride.Add("Pacify-Humanoid", new EffectCosts { CostA = 12, CostB = 100, OffsetGold = 60 });
-        durationCostOverride.Add("Pacify-Undead", new EffectCosts { CostA = 12, CostB = 100 });
+        chanceCostOverride.Add("Pacify-Animal", new EffectCosts { CostA = 12, CostB = 100, OffsetGold = 36 });
+        chanceCostOverride.Add("Pacify-Daedra", new EffectCosts { CostA = 14, CostB = 120, OffsetGold = 160 });
+        chanceCostOverride.Add("Pacify-Humanoid", new EffectCosts { CostA = 12, CostB = 100, OffsetGold = 60 });
+        chanceCostOverride.Add("Pacify-Undead", new EffectCosts { CostA = 12, CostB = 100 });
         durationCostOverride.Add(SpellReflection.EffectKey, new EffectCosts { CostA = 12, CostB = 100 });
         chanceCostOverride.Add(SpellReflection.EffectKey, new EffectCosts { CostA = 12, CostB = 114 });
         durationCostOverride.Add(SpellResistance.EffectKey, new EffectCosts { CostA = 10, CostB = 95 });
