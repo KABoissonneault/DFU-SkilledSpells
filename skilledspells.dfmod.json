@@ -11,6 +11,7 @@
         "Assets/Game/Mods/SkilledSpells/Scripts/SkilledSpellsMod.cs",
         "Assets/Game/Mods/SkilledSpells/Scripts/SkilledEffectSettingsEditorWindow.cs",
         "Assets/Game/Mods/SkilledSpells/Textures/Img/MASK05I0.IMG.png",
-        "Assets/Game/Mods/SkilledSpells/Scripts/SkillsSpellsTextProvider.cs"
+        "Assets/Game/Mods/SkilledSpells/Scripts/SkillsSpellsTextProvider.cs",
+        "Assets/Game/Mods/SkilledSpells/SpellRecords.json"
     ]
 }

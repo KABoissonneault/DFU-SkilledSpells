@@ -1,0 +1,43 @@
+[
+	{
+		"index": 60,
+		"effects": [
+			{
+				"type": 3,
+				"subType": 1,
+				"chanceBase": 35,
+			}
+		]
+	},
+	{
+		"index": 97,
+		"effects": [
+			{
+				"type": 10,
+				"subType": 8,
+				"magnitudeBaseLow": 5,
+				"magnitudeBaseHigh": 10,
+			}
+		]
+	},
+	{
+		"index": 100,
+		"rangeType": 2,
+		"icon": 2,
+		"spellName": "Bae's Best Buddy",
+		"element": 4,
+		"effects": [
+			{
+				"type": 33,
+				"subType": 2,
+				"chanceBase": 35
+			},
+			{
+				"type": 10,
+				"subType": 8,
+				"magnitudeBaseLow": 11,
+				"magnitudeBaseHigh": 20,
+			}
+		]
+	}
+]
