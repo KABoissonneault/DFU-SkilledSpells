@@ -9,5 +9,6 @@
     "Files": [
         "Assets/Game/Mods/SkilledSpells/skilledspells.dfmod.json",
         "Assets/Game/Mods/SkilledSpells/Scripts/SkilledSpellsMod.cs"
+        "Assets/Game/Mods/SkilledSpells/SpellRecords.json"
     ]
 }
