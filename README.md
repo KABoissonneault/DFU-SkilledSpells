@@ -47,3 +47,8 @@ Note that characters who pick magic schools as their Primary and Major skills al
 >Doesn't this make spell progression slower overall?
 
 Yes, until you master the skill entirely. I don't think it's a bad thing, spells already scale to ridiculous levels in both Arena and Daggerfall, this just makes them very strong instead.
+
+## Changelog
+
+- 0.1: Initial release
+- 0.2: Caster levels are now visible in the Skills lists of the character sheet (F5). Magic items now used player level rather than "skilled" caster level

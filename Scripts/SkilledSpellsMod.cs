@@ -32,6 +32,8 @@ public class SkilledSpellsMod : MonoBehaviour
 
         ConsoleCommandsDatabase.RegisterCommand("print_caster_levels", "Prints the caster level for all spell schools", "PRINT_CASTER_LEVELS", PrintCasterLevels);
 
+        mod.MessageReceiver = MessageReceiver;
+
         Debug.Log("Finished mod init: Skilled Spells");
     }
 
@@ -97,5 +99,33 @@ public class SkilledSpellsMod : MonoBehaviour
             $"Alteration: {SchoolCasterLevel(DFCareer.Skills.Alteration)}\n" +
             $"Thaumaturgy: {SchoolCasterLevel(DFCareer.Skills.Thaumaturgy)}\n" +
             $"Mysticism: {SchoolCasterLevel(DFCareer.Skills.Mysticism)}";
+    }
+
+    static void MessageReceiver(string message, object data, DFModMessageCallback callBack)
+    {
+        switch(message)
+        {
+            case "CasterLevel":
+                DFCareer.Skills skill = (DFCareer.Skills)data;
+                if(!IsCasterSkill(skill))
+                {
+                    Debug.LogError($"Could not return caster level for invalid skill '{Enum.GetName(typeof(DFCareer.Skills), skill)}'");
+                    break;
+                }
+                callBack(message, SchoolCasterLevel(skill));
+                break;
+            case "CasterLevels":
+                int[] casterLevels = new int[]
+                {
+                    SchoolCasterLevel(DFCareer.Skills.Destruction),
+                    SchoolCasterLevel(DFCareer.Skills.Restoration),
+                    SchoolCasterLevel(DFCareer.Skills.Illusion),
+                    SchoolCasterLevel(DFCareer.Skills.Alteration),
+                    SchoolCasterLevel(DFCareer.Skills.Thaumaturgy),
+                    SchoolCasterLevel(DFCareer.Skills.Mysticism)
+                };
+                callBack(message, casterLevels);
+                break;
+        }
     }
 }

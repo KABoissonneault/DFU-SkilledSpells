@@ -3,7 +3,7 @@
     "ModVersion": "0.2",
     "ModAuthor": "Kab the Bird Ranger",
     "ContactInfo": "kaboissonneault@gmail.com",
-    "DFUnity_Version": "0.11.3",
+    "DFUnity_Version": "0.11.4",
     "ModDescription": "Makes caster level relative to magic skills rather than just character level",
     "GUID": "940c2af8-a914-498e-a2aa-73f7d92e3370",
     "Files": [
