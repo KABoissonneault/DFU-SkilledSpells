@@ -35,7 +35,7 @@ public class SkilledSpellsMod : MonoBehaviour
     {
         Debug.Log("Begin mod init: Skilled Spells");
 
-        RegisterCostOverrides();
+        ParseCostOverrides();
 		
         DaggerfallUnity.Instance.TextProvider = new SkillsSpellsTextProvider(DaggerfallUnity.Instance.TextProvider);
 
@@ -43,9 +43,6 @@ public class SkilledSpellsMod : MonoBehaviour
         FormulaHelper.RegisterOverride<Func<IEntityEffect, EffectSettings, DaggerfallEntity, FormulaHelper.SpellCost>>(mod, "CalculateEffectCosts", CalculateEffectCosts);
 
         ConsoleCommandsDatabase.RegisterCommand("print_caster_levels", "Prints the caster level for all spell schools", "PRINT_CASTER_LEVELS", PrintCasterLevels);
-#if UNITY_EDITOR
-        ConsoleCommandsDatabase.RegisterCommand("verify_spell_costs", "Verifies the Skilled Spells overriden spell costs against a verification table, in the Persistent Path folder", "VERIFY_SPELL_COSTS [filename]", VerifyCostOverrides);
-#endif
 
         UIWindowFactory.RegisterCustomUIWindow(UIWindowType.SpellMaker, typeof(SkilledSpellmakerWindow));
         UIWindowFactory.RegisterCustomUIWindow(UIWindowType.EffectSettingsEditor, typeof(SkilledEffectSettingsEditorWindow));
@@ -63,222 +60,56 @@ public class SkilledSpellsMod : MonoBehaviour
             || skill == DFCareer.Skills.Thaumaturgy;
     }
 
-    void RegisterCostOverrides()
+    void ParseCostOverrides()
     {
-        var attributeKeys = new string[] { "Agility", "Endurance", "Intelligence", "Luck", "Personality", "Speed", "Strength", "Willpower" };
+        TextAsset costsFile = mod.GetAsset<TextAsset>("SkilledSpellsCosts.csv");
+        if (costsFile == null)
+            return;
 
-        // Alteration
-        durationCostOverride.Add(Climbing.EffectKey, new EffectCosts { CostA = 8, CostB = 60 });
+        string[] lines = costsFile.text.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 
+        foreach (string line in lines.Skip(1))
         {
-            var elementKeys = new string[] { "Fire", "Frost", "Shock", "Magicka" };
-            foreach(var elementKey in elementKeys.Select(key => $"ElementalResistance-{key}"))
+            string[] tokens = line.Split(';');
+            string key = tokens[0];
+
+            // Duration override
+            if(!string.IsNullOrEmpty(tokens[1]))
             {
-                durationCostOverride.Add(elementKey, new EffectCosts { CostA = 4, CostB = 30 });
-                chanceCostOverride.Add(elementKey, new EffectCosts { CostA = 4, CostB = 30 });
-            }
-
-            durationCostOverride.Add("ElementalResistance-Poison", new EffectCosts { CostA = 6, CostB = 45 });
-            chanceCostOverride.Add("ElementalResistance-Poison", new EffectCosts { CostA = 6, CostB = 45 });
-        }
-
-        durationCostOverride.Add(Jumping.EffectKey, new EffectCosts { CostA = 2, CostB = 15 });
-        durationCostOverride.Add(Paralyze.EffectKey, new EffectCosts { CostA = 12, CostB = 100, OffsetGold = 25 });
-        chanceCostOverride.Add(Paralyze.EffectKey, new EffectCosts { CostA = 12, CostB = 100 });
-        durationCostOverride.Add(Shield.EffectKey, new EffectCosts { CostA = 2, CostB = 15 });
-        magnitudeCostOverride.Add(Shield.EffectKey, new EffectCosts { CostA = 4, CostB = 30 });
-        durationCostOverride.Add(Slowfall.EffectKey, new EffectCosts { CostA = 10, CostB = 75 });
-        durationCostOverride.Add(WaterBreathing.EffectKey, new EffectCosts { CostA = 4, CostB = 30 });
-
-        // Destruction
-        durationCostOverride.Add(ContinuousDamageFatigue.EffectKey, new EffectCosts { CostA = 6, CostB = 57 });
-        magnitudeCostOverride.Add(ContinuousDamageFatigue.EffectKey, new EffectCosts { CostA = 10, CostB = 95 });
-        durationCostOverride.Add(ContinuousDamageHealth.EffectKey, new EffectCosts { CostA = 6, CostB = 57 });
-        magnitudeCostOverride.Add(ContinuousDamageHealth.EffectKey, new EffectCosts { CostA = 10, CostB = 95 });
-        durationCostOverride.Add(ContinuousDamageSpellPoints.EffectKey, new EffectCosts { CostA = 6, CostB = 57 });
-        magnitudeCostOverride.Add(ContinuousDamageSpellPoints.EffectKey, new EffectCosts { CostA = 10, CostB = 95 });
-
-        magnitudeCostOverride.Add(DamageFatigue.EffectKey, new EffectCosts { CostA = 8, CostB = 60 });
-        magnitudeCostOverride.Add(DamageHealth.EffectKey, new EffectCosts { CostA = 8, CostB = 60 });
-        magnitudeCostOverride.Add(DamageSpellPoints.EffectKey, new EffectCosts { CostA = 8, CostB = 60 });
-
-        foreach(string attributeKey in attributeKeys.Select(key => $"Drain-{key}"))
-        {
-            magnitudeCostOverride.Add(attributeKey, new EffectCosts { CostA = 12, CostB = 100 });
-        }
-
-        foreach (string attributeKey in attributeKeys.Select(key => $"Transfer-{key}"))
-        {
-            magnitudeCostOverride.Add(attributeKey, new EffectCosts { CostA = 12, CostB = 100, OffsetGold = 40 });
-        }
-        magnitudeCostOverride.Add(TransferFatigue.EffectKey, new EffectCosts { CostA = 12, CostB = 100, OffsetGold = 40 });
-        magnitudeCostOverride.Add(TransferHealth.EffectKey, new EffectCosts { CostA = 12, CostB = 100, OffsetGold = 40 });
-
-        chanceCostOverride.Add(Disintegrate.EffectKey, new EffectCosts { CostA = 18, CostB = 140 });
-
-        // Illusion
-        durationCostOverride.Add(ChameleonNormal.EffectKey, new EffectCosts { CostA = 10, CostB = 75 });
-        durationCostOverride.Add(ChameleonTrue.EffectKey, new EffectCosts { CostA = 14, CostB = 120 });
-        durationCostOverride.Add(InvisibilityNormal.EffectKey, new EffectCosts { CostA = 14, CostB = 120 });
-        durationCostOverride.Add(InvisibilityTrue.EffectKey, new EffectCosts { CostA = 18, CostB = 140 });
-        durationCostOverride.Add(ShadowNormal.EffectKey, new EffectCosts { CostA = 10, CostB = 75 });
-        durationCostOverride.Add(ShadowTrue.EffectKey, new EffectCosts { CostA = 14, CostB = 120 });
-
-        // Mysticism
-        durationCostOverride.Add(ComprehendLanguages.EffectKey, new EffectCosts { CostA = 10, CostB = 95 });
-        chanceCostOverride.Add(ComprehendLanguages.EffectKey, new EffectCosts { CostA = 4, CostB = 38 });
-        durationCostOverride.Add(CreateItem.EffectKey, new EffectCosts { CostA = 10, CostB = 75 });
-        chanceCostOverride.Add(DispelDaedra.EffectKey, new EffectCosts { CostA = 22, CostB = 180 });
-        chanceCostOverride.Add(DispelMagic.EffectKey, new EffectCosts { CostA = 22, CostB = 180 });
-        chanceCostOverride.Add(DispelUndead.EffectKey, new EffectCosts { CostA = 18, CostB = 140 });
-        chanceCostOverride.Add(Lock.EffectKey, new EffectCosts { CostA = 8, CostB = 60 });
-        durationCostOverride.Add(Silence.EffectKey, new EffectCosts { CostA = 14, CostB = 120 });
-        chanceCostOverride.Add(Silence.EffectKey, new EffectCosts { CostA = 4, CostB = 38 });
-        durationCostOverride.Add(SoulTrap.EffectKey, new EffectCosts { CostA = 10, CostB = 80, OffsetGold = 40 });
-        chanceCostOverride.Add(SoulTrap.EffectKey, new EffectCosts { CostA = 4, CostB = 30 });
-
-        // Restoration
-        chanceCostOverride.Add(CureDisease.EffectKey, new EffectCosts { CostA = 8, CostB = 100 });
-        chanceCostOverride.Add(CureParalyzation.EffectKey, new EffectCosts { CostA = 8, CostB = 100 });
-        chanceCostOverride.Add(CurePoison.EffectKey, new EffectCosts { CostA = 8, CostB = 100 });
-        foreach (string attributeKey in attributeKeys.Select(key => $"Fortify-{key}"))
-        {
-            durationCostOverride.Add(attributeKey, new EffectCosts { CostA = 8, CostB = 60 });
-            magnitudeCostOverride.Add(attributeKey, new EffectCosts { CostA = 14, CostB = 120 });
-        }
-        durationCostOverride.Add(FreeAction.EffectKey, new EffectCosts { CostA = 14, CostB = 120 });
-
-        foreach (string attributeKey in attributeKeys.Select(key => $"Heal-{key}"))
-        {
-            magnitudeCostOverride.Add(attributeKey, new EffectCosts { CostA = 4, CostB = 30 });
-        }
-        magnitudeCostOverride.Add(HealFatigue.EffectKey, new EffectCosts { CostA = 4, CostB = 30 });
-        magnitudeCostOverride.Add(HealHealth.EffectKey, new EffectCosts { CostA = 4, CostB = 30 });
-
-        durationCostOverride.Add(Regenerate.EffectKey, new EffectCosts { CostA = 4, CostB = 30 });
-        durationCostOverride.Add(SpellAbsorption.EffectKey, new EffectCosts { CostA = 18, CostB = 140 });
-        chanceCostOverride.Add(SpellAbsorption.EffectKey, new EffectCosts { CostA = 18, CostB = 140 });
-
-        // Thaumaturgy
-        chanceCostOverride.Add(CharmEffect.EffectKey, new EffectCosts { CostA = 8, CostB = 76 });
-        {
-            var typeKeys = new string[] { "Enemy", "Magic", "Treasure" };
-            foreach (string attributeKey in typeKeys.Select(key => $"Detect-{key}"))
-            {
-                durationCostOverride.Add(attributeKey, new EffectCosts { CostA = 4, CostB = 30 });
-            }
-        }
-        durationCostOverride.Add(Levitate.EffectKey, new EffectCosts { CostA = 12, CostB = 100 });
-        chanceCostOverride.Add("Pacify-Animal", new EffectCosts { CostA = 12, CostB = 100, OffsetGold = 36 });
-        chanceCostOverride.Add("Pacify-Daedra", new EffectCosts { CostA = 14, CostB = 120, OffsetGold = 160 });
-        chanceCostOverride.Add("Pacify-Humanoid", new EffectCosts { CostA = 12, CostB = 100, OffsetGold = 60 });
-        chanceCostOverride.Add("Pacify-Undead", new EffectCosts { CostA = 12, CostB = 100 });
-        durationCostOverride.Add(SpellReflection.EffectKey, new EffectCosts { CostA = 12, CostB = 100 });
-        chanceCostOverride.Add(SpellReflection.EffectKey, new EffectCosts { CostA = 12, CostB = 114 });
-        durationCostOverride.Add(SpellResistance.EffectKey, new EffectCosts { CostA = 10, CostB = 95 });
-        chanceCostOverride.Add(SpellResistance.EffectKey, new EffectCosts { CostA = 8, CostB = 76 });
-        durationCostOverride.Add(WaterWalking.EffectKey, new EffectCosts { CostA = 8, CostB = 60 });
-    }
-
-#if UNITY_EDITOR
-    string VerifyCostOverrides(params string[] args)
-    {
-        string tablePath = Path.Combine(DaggerfallUnity.Settings.PersistentDataPath, "SkilledSpellsCosts.csv");
-        if (!File.Exists(tablePath))
-            return $"Could not find '{tablePath}'";
-
-        Dictionary<string, EffectCosts> durationCosts = new Dictionary<string, EffectCosts>();
-        Dictionary<string, EffectCosts> chanceCosts = new Dictionary<string, EffectCosts>();
-        Dictionary<string, EffectCosts> magnitudeCosts = new Dictionary<string, EffectCosts>();
-
-        using(StreamReader tableFile = File.OpenText(tablePath))
-        {
-            tableFile.ReadLine(); // Strip header
-
-            while(!tableFile.EndOfStream)
-            {
-                string line = tableFile.ReadLine();
-
-                string[] tokens = line.Split(';');
-                string effect = tokens[0];
-
-                int ValueOrZero(string token)
+                EffectCosts effectCosts = new EffectCosts { CostA = int.Parse(tokens[1]), CostB = int.Parse(tokens[2]) };
+                if(int.TryParse(tokens[3], out int offsetGold))
                 {
-                    return !string.IsNullOrEmpty(token) ? int.Parse(token) : 0;
+                    effectCosts.OffsetGold = offsetGold;
                 }
 
-                int durationA = ValueOrZero(tokens[2]);
-                int durationB = ValueOrZero(tokens[3]);
-                int durationOffset = ValueOrZero(tokens[4]);
+                durationCostOverride.Add(key, effectCosts);
+            }
 
-                int chanceA = ValueOrZero(tokens[5]);
-                int chanceB = ValueOrZero(tokens[6]);
-                int chanceOffset = ValueOrZero(tokens[7]);
+            // Chance override
+            if (!string.IsNullOrEmpty(tokens[4]))
+            {
+                EffectCosts effectCosts = new EffectCosts { CostA = int.Parse(tokens[4]), CostB = int.Parse(tokens[5]) };
+                if (int.TryParse(tokens[6], out int offsetGold))
+                {
+                    effectCosts.OffsetGold = offsetGold;
+                }
 
-                int magnitudeA = ValueOrZero(tokens[8]);
-                int magnitudeB = ValueOrZero(tokens[9]);
-                int magnitudeOffset = ValueOrZero(tokens[10]);
+                chanceCostOverride.Add(key, effectCosts);
+            }
 
-                durationCosts.Add(effect, new EffectCosts { CostA = durationA, CostB = durationB, OffsetGold = durationOffset });
-                chanceCosts.Add(effect, new EffectCosts { CostA = chanceA, CostB = chanceB, OffsetGold = chanceOffset });
-                magnitudeCosts.Add(effect, new EffectCosts { CostA = magnitudeA, CostB = magnitudeB, OffsetGold = magnitudeOffset });
+            // Magnitude override
+            if (!string.IsNullOrEmpty(tokens[7]))
+            {
+                EffectCosts effectCosts = new EffectCosts { CostA = int.Parse(tokens[7]), CostB = int.Parse(tokens[8]) };
+                if (int.TryParse(tokens[9], out int offsetGold))
+                {
+                    effectCosts.OffsetGold = offsetGold;
+                }
+
+                magnitudeCostOverride.Add(key, effectCosts);
             }
         }
-
-        foreach(KeyValuePair<string, EffectCosts> costOverride in durationCostOverride)
-        {
-            EffectCosts validationCost = durationCosts[costOverride.Key];
-            EffectCosts overrideCost = costOverride.Value;
-            if (validationCost.CostA != overrideCost.CostA)
-                Debug.LogError($"[Skilled Spells] Validation error for spell effect '{costOverride.Key}':" +
-                    $"duration override CostA '{overrideCost.CostA}' does not match validation '{validationCost.CostA}'");
-
-            if (validationCost.CostB != overrideCost.CostB)
-                Debug.LogError($"[Skilled Spells] Validation error for spell effect '{costOverride.Key}':" +
-                    $"duration override CostB '{overrideCost.CostB}' does not match validation '{validationCost.CostB}'");
-
-            if (validationCost.OffsetGold != overrideCost.OffsetGold)
-                Debug.LogError($"[Skilled Spells] Validation error for spell effect '{costOverride.Key}':" +
-                    $"duration override OffsetGold '{overrideCost.OffsetGold}' does not match validation '{validationCost.OffsetGold}'");
-        }
-
-        foreach (KeyValuePair<string, EffectCosts> costOverride in chanceCostOverride)
-        {
-            EffectCosts validationCost = chanceCosts[costOverride.Key];
-            EffectCosts overrideCost = costOverride.Value;
-            if (validationCost.CostA != overrideCost.CostA)
-                Debug.LogError($"[Skilled Spells] Validation error for spell effect '{costOverride.Key}':" +
-                    $"chance override CostA '{overrideCost.CostA}' does not match validation '{validationCost.CostA}'");
-
-            if (validationCost.CostB != overrideCost.CostB)
-                Debug.LogError($"[Skilled Spells] Validation error for spell effect '{costOverride.Key}':" +
-                    $"chance override CostB '{overrideCost.CostB}' does not match validation '{validationCost.CostB}'");
-
-            if (validationCost.OffsetGold != overrideCost.OffsetGold)
-                Debug.LogError($"[Skilled Spells] Validation error for spell effect '{costOverride.Key}':" +
-                    $"chance override OffsetGold '{overrideCost.OffsetGold}' does not match validation '{validationCost.OffsetGold}'");
-        }
-
-        foreach (KeyValuePair<string, EffectCosts> costOverride in magnitudeCostOverride)
-        {
-            EffectCosts validationCost = magnitudeCosts[costOverride.Key];
-            EffectCosts overrideCost = costOverride.Value;
-            if (validationCost.CostA != overrideCost.CostA)
-                Debug.LogError($"[Skilled Spells] Validation error for spell effect '{costOverride.Key}':" +
-                    $"magnitude override CostA '{overrideCost.CostA}' does not match validation '{validationCost.CostA}'");
-
-            if (validationCost.CostB != overrideCost.CostB)
-                Debug.LogError($"[Skilled Spells] Validation error for spell effect '{costOverride.Key}':" +
-                    $"magnitude override CostB '{overrideCost.CostB}' does not match validation '{validationCost.CostB}'");
-
-            if (validationCost.OffsetGold != overrideCost.OffsetGold)
-                Debug.LogError($"[Skilled Spells] Validation error for spell effect '{costOverride.Key}':" +
-                    $"magnitude override OffsetGold '{overrideCost.OffsetGold}' does not match validation '{validationCost.OffsetGold}'");
-        }
-
-        return "Verification done";
     }
-#endif
 
     private static int SchoolCasterLevelBonus(DFCareer.Skills skill)
     {
