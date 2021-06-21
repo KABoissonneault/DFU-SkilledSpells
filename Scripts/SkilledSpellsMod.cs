@@ -81,10 +81,11 @@ public class SkilledSpellsMod : MonoBehaviour
     private static int CalculateCasterLevel(DaggerfallEntity caster, IEntityEffect effect)
     {
         // Only handle magic spells from the player
-        // Also don't use "skilled levels" for magic items
+        // Also don't use "skilled levels" for magic items and potions
         if (caster != GameManager.Instance.PlayerEntity
             || effect.Properties.MagicSkill == DFCareer.MagicSkills.None
-            || (effect.ParentBundle != null && effect.ParentBundle.castByItem != null)
+            || effect.ParentBundle == null
+            || effect.ParentBundle.bundleType != BundleTypes.Spell
             )
             return (caster != null) ? caster.Level : 1;
 
