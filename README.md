@@ -51,4 +51,5 @@ Yes, until you master the skill entirely. I don't think it's a bad thing, spells
 ## Changelog
 
 - 0.1: Initial release
-- 0.2: Caster levels are now visible in the Skills lists of the character sheet (F5). Magic items now used player level rather than "skilled" caster level
+- 0.2: Caster levels are now visible in the Skills lists of the character sheet (F5). Magic items now use the player level rather than the "skilled" caster level (ie: classic behavior)
+- 0.3: Potions now use the player level rather than the "skilled" caster level (ie: classic behavior)
